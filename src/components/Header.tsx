@@ -63,7 +63,7 @@ const Header = () => {
               navigate("/");
             }}
           >
-            LIFESIM
+            New Bland
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -125,7 +125,7 @@ const Header = () => {
               textDecoration: "none",
             }}
           >
-            LIFESIM
+            New Bland
           </Typography>
           <Box
             sx={{

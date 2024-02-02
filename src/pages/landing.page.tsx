@@ -11,11 +11,11 @@ const LandingPage = () => {
           <Typography variant="h4" textAlign="center">
             Make it easier.
             <br />
-            Practice for difficult moments with LifeSim
+            Please have an amazing call with AI
           </Typography>
           <Typography variant="h5" textAlign="center" color="red">
             This app allows you to have a voice conversation with a bot using
-            gpt-3.5 api
+            gpt api
           </Typography>
         </Stack>
       </Container>
