@@ -56,7 +56,7 @@ export const chatbotApi = createApi({
     makeCall: builder.query<boolean, { phoneNumber: any }>({
       query({ phoneNumber }) {
         return {
-          url: `/phone/make-call/${phoneNumber}`,
+          url: `/../phone/make-call/${phoneNumber}`,
         };
       },
       transformResponse: (result: { data: boolean }) => result.data,
