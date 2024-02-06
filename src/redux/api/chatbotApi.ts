@@ -1,6 +1,11 @@
 import { createApi } from "@reduxjs/toolkit/dist/query/react";
 import customFetchBase from "./customFetchBase";
-import { IChatbotInfo, IChatbotItem, IGenericResponse } from "./types";
+import {
+  IChatbotInfo,
+  IChatbotItem,
+  IGenericResponse,
+  IPhoneNumberInfo,
+} from "./types";
 
 export const chatbotApi = createApi({
   reducerPath: "chatbotApi",
@@ -44,8 +49,17 @@ export const chatbotApi = createApi({
           },
         };
       },
-      transformResponse: (result: { data: { msg: string; audioBase64: string } }) =>
-        result.data,
+      transformResponse: (result: {
+        data: { msg: string; audioBase64: string };
+      }) => result.data,
+    }),
+    makeCall: builder.query<boolean, { phoneNumber: any }>({
+      query({ phoneNumber }) {
+        return {
+          url: `/phone/make-call/${phoneNumber}`,
+        };
+      },
+      transformResponse: (result: { data: boolean }) => result.data,
     }),
   }),
 });
@@ -54,5 +68,6 @@ export const {
   useCreateChatbotMutation,
   useGetChatbotsQuery,
   useGetChatbotQuery,
+  useMakeCallQuery,
   useChatMutation,
 } = chatbotApi;

@@ -14,24 +14,29 @@ import {
   Modal,
   Fade,
   Backdrop,
+  Fab
 } from "@mui/material";
 import {
   Mic,
   FiberManualRecord,
   Send,
   Settings,
-  Close,
+  Close
 } from "@mui/icons-material";
+import EditIcon from '@mui/icons-material/Edit';
+import PhoneEnabledSharpIcon from '@mui/icons-material/PhoneEnabledSharp';
 import { useParams } from "react-router-dom";
 // import { useAudioRecorder } from "react-audio-voice-recorder";
+import { skipToken } from '@reduxjs/toolkit/query/react';
 
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 
-import { useChatMutation, useGetChatbotQuery } from "../redux/api/chatbotApi";
+import { useChatMutation, useGetChatbotQuery, useMakeCallQuery } from "../redux/api/chatbotApi";
 import FullScreenLoader from "../components/FullScreenLoader";
 // import { useGetTranscriptMutation } from "../redux/api/voiceApi";
+import { MuiTelInput } from "mui-tel-input";
 
 const style = {
   position: "absolute" as "absolute",
@@ -68,6 +73,14 @@ const ChatbotPage = () => {
   // const { startRecording, stopRecording, recordingBlob, isRecording } =
   //   useAudioRecorder();
   // const [getTranscript, tranState] = useGetTranscriptMutation();
+  const [phone, setPhone] = useState("");
+  const [phoneNumber, setRequestPhone] = useState("");
+  const { data: isCallSuccessful, error } = useMakeCallQuery(phoneNumber ? { phoneNumber: phoneNumber } : skipToken);
+
+
+  const handleChange = (newPhone: any) => {
+    setPhone(newPhone);
+  };
 
   const {
     transcript,
@@ -107,21 +120,21 @@ const ChatbotPage = () => {
   // }, [tranState]);
 
   function base64ToBlob(base64: string, mimeType: string): Blob {
-      const byteCharacters = atob(base64);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      console.log(byteArray);
-      return new Blob([byteArray], { type: mimeType });
+    const byteCharacters = atob(base64);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    console.log(byteArray);
+    return new Blob([byteArray], { type: mimeType });
   }
 
   useEffect(() => {
     if (chatState.isSuccess) {
       const base64String = chatState.data.audioBase64;
       console.log("base64: ", base64String);
-      const audioBlob = base64ToBlob(base64String, 'audio/mpeg');
+      const audioBlob = base64ToBlob(base64String, "audio/mpeg");
       const audioUrl = URL.createObjectURL(audioBlob);
       console.log("url: ", audioUrl);
       messagesRef.current.push({ type: "assistant", text: chatState.data.msg });
@@ -156,6 +169,11 @@ const ChatbotPage = () => {
     setMsg("");
     resetTranscript();
   };
+
+  const handleCallRequest = () => {
+    alert();
+    setRequestPhone(phone);
+  }
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -205,10 +223,17 @@ const ChatbotPage = () => {
           mt: 2,
         }}
       >
-        <Box width="100%" maxWidth={600} textAlign="right" mb={2}>
-          <IconButton onClick={() => setOpen(true)}>
-            <Settings />
-          </IconButton>
+        <Box
+          width="100%"
+          maxWidth={600}
+          textAlign="center"
+          mb={2}
+        >
+          <MuiTelInput value={phone} onChange={handleChange} sx={{ mx: 2 }} />
+          <Fab onClick={() => handleCallRequest()} color={`${isCallSuccessful ? "primary" : "error"}`} aria-label="call" sx={{ mx: 2 }}>
+            <PhoneEnabledSharpIcon />
+          </Fab>
+          
         </Box>
         <Box
           border="4px solid #272727"
@@ -219,7 +244,7 @@ const ChatbotPage = () => {
           display="flex"
           flexDirection="column"
           gap={3}
-          // bgcolor="white"
+        // bgcolor="white"
         >
           <Box borderRadius={4} flex={1} overflow="auto" p={2} ref={historyRef}>
             {messages.map((row, index) => (

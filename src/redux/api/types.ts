@@ -32,3 +32,8 @@ export interface IChatbotInfo {
   image: string;
   person_details: string[];
 }
+
+export interface IPhoneNumberInfo {
+  _id: string;
+  phoneNumber: string;
+}
