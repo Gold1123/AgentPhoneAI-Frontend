@@ -75,8 +75,7 @@ const ChatbotPage = () => {
   // const [getTranscript, tranState] = useGetTranscriptMutation();
   const [phone, setPhone] = useState("");
   const [phoneNumber, setRequestPhone] = useState("");
-  const { data: isCallSuccessful, error } = useMakeCallQuery(phoneNumber ? { phoneNumber: phoneNumber } : skipToken);
-
+  const { data: isCallSuccessful, error } = useMakeCallQuery(phoneNumber && slug !== undefined ? { slug: slug, phoneNumber: phoneNumber } : skipToken);
 
   const handleChange = (newPhone: any) => {
     setPhone(newPhone);
@@ -141,7 +140,7 @@ const ChatbotPage = () => {
       setMessages([...messagesRef.current]);
 
       const audio = new Audio(audioUrl);
-      audio.play();
+      // audio.play();
       audio.onended = () => {
         URL.revokeObjectURL(audioUrl);
       };
@@ -157,6 +156,14 @@ const ChatbotPage = () => {
     transcriptRef.current = transcript;
     setMsg(transcript);
   }, [transcript]);
+
+
+  useEffect(() => {
+    getResponse({
+        slug: slug as string,
+        msg: messagesRef.current,
+    });
+  }, [])
 
   const handleSubmit = () => {
     messagesRef.current.push({ type: "user", text: msgRef.current });

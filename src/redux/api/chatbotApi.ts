@@ -53,10 +53,18 @@ export const chatbotApi = createApi({
         data: { msg: string; audioBase64: string };
       }) => result.data,
     }),
-    makeCall: builder.query<boolean, { phoneNumber: any }>({
-      query({ phoneNumber }) {
+    // makeCall: builder.query<boolean, { phoneNumber: any }>({
+    //   query({ phoneNumber }) {
+    //     return {
+    //       url: `/../make-call/${phoneNumber}`,
+    //     };
+    //   },
+    //   transformResponse: (result: { data: boolean }) => result.data,
+    // }),
+    makeCall: builder.query<boolean, { slug: string; phoneNumber: string }>({
+      query({ slug, phoneNumber }) {
         return {
-          url: `/../make-call/${phoneNumber}`,
+          url: `/../make-call/${slug}/${phoneNumber}`,
         };
       },
       transformResponse: (result: { data: boolean }) => result.data,
