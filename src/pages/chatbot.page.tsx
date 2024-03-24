@@ -75,8 +75,10 @@ const ChatbotPage = () => {
   // const [getTranscript, tranState] = useGetTranscriptMutation();
   const [phone, setPhone] = useState("");
   const [phoneNumber, setRequestPhone] = useState("");
+  const [callState, setCallState] = useState(false);
   const { data: isCallSuccessful, error } = useMakeCallQuery(phoneNumber && slug !== undefined ? { slug: slug, phoneNumber: phoneNumber } : skipToken);
 
+  
   const handleChange = (newPhone: any) => {
     setPhone(newPhone);
   };
@@ -140,7 +142,7 @@ const ChatbotPage = () => {
       setMessages([...messagesRef.current]);
 
       const audio = new Audio(audioUrl);
-      // audio.play();
+      audio.play();
       audio.onended = () => {
         URL.revokeObjectURL(audioUrl);
       };
@@ -178,9 +180,17 @@ const ChatbotPage = () => {
   };
 
   const handleCallRequest = () => {
-    alert();
+    if(callState == true){
+      setCallState(false)
+      return;
+    }
     setRequestPhone(phone);
+    setCallState(true)
   }
+
+  // useEffect(() => {
+  //   isCallSuccessful = false;
+  // }, [isCallSuccessful])
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -237,7 +247,7 @@ const ChatbotPage = () => {
           mb={2}
         >
           <MuiTelInput value={phone} onChange={handleChange} sx={{ mx: 2 }} />
-          <Fab onClick={() => handleCallRequest()} color={`${isCallSuccessful ? "primary" : "error"}`} aria-label="call" sx={{ mx: 2 }}>
+          <Fab onClick={() => handleCallRequest()} color={`${callState && isCallSuccessful ? "error" : "primary"}`} aria-label="call" sx={{ mx: 2 }}>
             <PhoneEnabledSharpIcon />
           </Fab>
           
